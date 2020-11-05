@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <range-slider :max="20" :step="0.5"/>
+    <range-slider :max="10" :step="0.1"/>
   </div>
 </template>
 

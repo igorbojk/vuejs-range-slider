@@ -8,7 +8,7 @@
           class="line"
           v-for="(line, index) in lines"
           :key="index"
-          :class="line.class"
+          :class="generateLineClass(line)"
       >
         <span class="line-value">
           {{line.value}}
@@ -31,6 +31,7 @@ export default {
       type: Number,
       default: 1
     },
+
     /**
      * @property {number} max
      */
@@ -38,20 +39,41 @@ export default {
       type: Number,
       default: 10
     },
+
     /**
      * @property {number} step
      */
     step: {
       type: Number,
       default: 1
+    },
+
+    /**
+     * @property {number} startValue
+     */
+    startValue: {
+      type: Number,
+      default: 5
+    },
+
+    /**
+     * @property {number} startValue
+     */
+    startNextValue: {
+      type: Number,
+      default: 6
     }
   },
   data() {
     return {
-      lines: []
+      lines: [],
+      currentValue: 5,
+      nextValue: 6
     };
   },
   mounted() {
+    this.currentValue = this.startValue;
+    this.nextValue = this.startNextValue;
     this.generateLines();
   },
   methods: {
@@ -65,6 +87,28 @@ export default {
         this.lines.push(elem);
         i = +i.toFixed(2) + this.step;
       }
+    },
+    /**
+     * @param line {{class: String, value: Number}}
+     */
+    generateLineClass(line) {
+      let classes = line.class;
+      const nextValue = +this.nextValue.toFixed(1);
+      if (line.value === nextValue) {
+        classes += ' next';
+      }
+
+      if (this.currentValue < nextValue) {
+        if (line.value >= this.currentValue && line.value <= nextValue) {
+          classes += " active";
+        }
+      } else {
+        if (line.value <= this.currentValue && line.value >= nextValue) {
+          classes += " active";
+        }
+      }
+
+      return classes;
     }
   }
 }
@@ -72,6 +116,9 @@ export default {
 
 <style scoped lang="scss">
   .range-slider{
+    ::-webkit-scrollbar{
+      height: 0;
+    }
     .lines-container{
       display: flex;
       align-items: flex-end;
@@ -90,8 +137,8 @@ export default {
     }
     .line{
       width: 1px;
-      margin-right: 10px;
-      background: #2de811;
+      margin-right: 18px;
+      background: #b4bfb1;
       border-radius: 2px;
       min-width: 1px;
       position: relative;
@@ -103,17 +150,17 @@ export default {
       }
       &.active{
         background: #fe7f01;
-        .value{
+        .line-value{
           color: #fe7f01;
         }
       }
       &-value{
         font-style: normal;
         font-weight: 500;
-        font-size: 8px;
-        color: #49de0c;
+        font-size: 10px;
+        color: #b4bfb1;
         position: absolute;
-        bottom: -10px;
+        bottom: -14px;
         transform: translateX(-50%);
       }
     }
